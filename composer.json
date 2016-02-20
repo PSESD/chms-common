@@ -14,6 +14,11 @@
         "laravel/lumen-framework": "^5.2"
     },
     "require-dev": {
+        "fzaninotto/faker": "~1.4",
+        "phpunit/phpunit": "~4.0",
+        "symfony/var-dumper": "~3.0",
+        "mockery/mockery": "^0.9.4",
+        "appzcoder/lumen-routes-list": "^1.0"
     },
     "autoload": {
         "psr-4": {

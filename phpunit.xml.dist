@@ -10,13 +10,13 @@
          stopOnFailure="false"
          syntaxCheck="false">
 		<testsuites>
-			<testsuite name="JWT Token Auth Guard">
+			<testsuite name="CHMS Common">
 				<directory>./tests</directory>
 			</testsuite>
 		</testsuites>
 		<filter>
 			<whitelist>
-				<directory suffix=".php">./app</directory>
+				<directory suffix=".php">./lib</directory>
 			</whitelist>
 		</filter>
 		<logging>

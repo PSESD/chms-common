@@ -5,7 +5,7 @@
  * @copyright Copyright (c) 2016 Puget Sound Educational Service District
  * @license   MIT
  */
-namespace CHMSTests\Common\Helpers;
+namespace CHMSTests\Common;
 
 class TestCase extends \Laravel\Lumen\Testing\TestCase
 {
@@ -16,6 +16,12 @@ class TestCase extends \Laravel\Lumen\Testing\TestCase
      */
     public function createApplication()
     {
-        return require __DIR__.'/../bootstrap/app.php';
+        require_once __DIR__.'/../vendor/autoload.php';
+        $app = new \Laravel\Lumen\Application(
+            realpath(__DIR__)
+        );
+		$app->withFacades();
+		$app->withEloquent();
+        return $app;
     }
 }
