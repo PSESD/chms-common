@@ -15,16 +15,36 @@ use CHMS\Common\Exceptions\InvalidAclRuleException;
 
 class AclGenerator
 {
+    /**
+     * @var array
+     */
     private $rules;
+
+    /**
+     * @var array
+     */
     private $config;
+
+    /**
+     * @var Acl
+     */
     private $acl;
 
-    public function __construct(array $rules, array $config)
+    /**
+     * Constructor
+     * @param array   $rules
+     * @param array   $config
+     */
+    public function __construct(array $rules, array $config = [])
     {
         $this->rules = array_merge($this->getDefaultRules(), $rules);
         $this->config = array_merge($this->getDefaultConfig(), $config);
     }
 
+    /**
+     * Generate ACL object
+     * @return Acl
+     */
     public function __invoke()
     {
         $this->acl = new Acl();
@@ -35,6 +55,9 @@ class AclGenerator
         return $this->acl;
     }
 
+    /**
+     * Load roles
+     */
     private function loadRoles()
     {
         foreach ($this->rules['roles'] as $role => $roleConfig) {
@@ -43,6 +66,9 @@ class AclGenerator
         }
     }
 
+    /**
+     * Load global rules
+     */
     private function loadGlobalRules()
     {
         foreach ($this->rules['globalRules'] as $rule) {
@@ -50,6 +76,9 @@ class AclGenerator
         }
     }
 
+    /**
+     * Load model rules
+     */
     private function loadModelRules()
     {
         foreach ($this->rules['modelRules'] as $model => $modelRuleSets) {
@@ -61,17 +90,28 @@ class AclGenerator
         }
     }
 
+
+    /**
+     * Load route rules
+     */
     private function loadRouteRules()
     {
         foreach ($this->rules['routeRules'] as $routeAlias => $routeRuleSets) {
             $resourceId = $this->config['routePrefix']. $routeAlias;
             $this->acl->addResource(new Resource($resourceId));
             foreach ($routeRuleSets as $ruleSet) {
-                $this->enforceRuleset($ruleSet, ['resources' => $resourceId]);
+                $this->enforceRuleset($ruleSet, ['resources' => $resourceId, 'privileges' => $this->config['routePrivilege']]);
             }
         }
     }
 
+
+    /**
+     * Enforce ruleset
+     *
+     * @param   string  $ruleSet
+     * @param   array   $base
+     */
     private function enforceRuleset($ruleSet, array $base)
     {
         if (!isset($this->rules['ruleSets'][$ruleSet])) {
@@ -82,6 +122,11 @@ class AclGenerator
         }
     }
 
+    /**
+     * Enforce rule
+     *
+     * @param array $rule
+     */
     private function enforceRule(array $rule)
     {
         if (
@@ -95,17 +140,31 @@ class AclGenerator
         $this->acl->{$ruleType}($rule['roles'], $rule['resources'], $rule['privileges'], $rule['assert']);
     }
 
-
+    /**
+     * Get default rule
+     *
+     * @return array
+     */
     private function getDefaultRules()
     {
         return ['roles' => [], 'globalRules' => [], 'modelRules' => [], 'ruleSets' => [], 'routeRules' => []];
     }
 
+    /**
+     * Get default config
+     *
+     * @return array
+     */
     private function getDefaultConfig()
     {
-        return ['modelPrefix' => 'm:', 'routePrefix' => 'r:'];
+        return ['modelPrefix' => 'm:', 'routePrefix' => 'r:', 'routePrivilege' => 'access'];
     }
 
+    /**
+     * Get empty rule
+     *
+     * @return array
+     */
     private function getEmptyRule()
     {
         return ['roles' => null, 'resources' => null, 'privileges' => null, 'resource' => null, 'assert' => null];

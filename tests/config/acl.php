@@ -15,13 +15,13 @@ return [
     'ruleSets' => [
         // note: for route rules, no context is pulled first. For example, any rule that references 'instructor' would allow ANY instructor
         'model-everyone' => [
-            ['allow', 'roles' => null, 'privileges' => ['access']]
+            ['allow', 'roles' => null]
         ],
         'route-everyone' => [
-            ['allow', 'roles' => null, 'privileges' => ['access']]
+            ['allow', 'roles' => null]
         ],
         'route-admins' => [
-            ['allow', 'roles' => 'hub_administrator', 'privileges' => ['access']]
+            ['allow', 'roles' => 'hub_administrator']
         ],
         'route-super' => [] // caught by global rule for super admin
     ],
