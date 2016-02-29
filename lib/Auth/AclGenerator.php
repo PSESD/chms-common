@@ -31,6 +31,11 @@ class AclGenerator
     private $acl;
 
     /**
+     * @var array
+     */
+    private $globalFieldRules = [];
+
+    /**
      * Constructor
      * @param array   $rules
      * @param array   $config
@@ -50,6 +55,7 @@ class AclGenerator
         $this->acl = new Acl();
         $this->loadRoles();
         $this->loadGlobalRules();
+        $this->loadGlobalFieldRules();
         $this->loadRouteRules();
         $this->loadModelRules();
         return $this->acl;
@@ -75,21 +81,83 @@ class AclGenerator
             $this->enforceRule($rule);
         }
     }
+    /**
+     * Load global field rules
+     */
+    private function loadGlobalFieldRules()
+    {
+        $this->globalFieldRules = $this->rules['globalFieldRules'];
+    }
+
+    private function detectModelFieldPolicies($modelClass, $fieldAccessPolicy, $defaultFieldPolicy = [])
+    {
+        $model = new $modelClass;
+        $acrossModelFieldPolicy = null;
+        if (isset($fieldAccessPolicy['*'])) {
+            $acrossModelFieldPolicy = $fieldAccessPolicy['*'];
+            unset($fieldAccessPolicy['*']);
+        }
+        $definedPolicies = array_merge($this->globalFieldRules, $fieldAccessPolicy);
+        $fields = $model->getTableColumns();
+        $policies = [];
+        foreach ($fields as $field) {
+            $fieldPolicies = [];
+            if (isset($definedPolicies[$field])) {
+                $fieldPolicies = $definedPolicies[$field];
+            } elseif ($acrossModelFieldPolicy !== null) {
+                $fieldPolicies = $acrossModelFieldPolicy;
+            }
+            if ($fieldPolicies === true) {
+                $fieldPolicies = $defaultFieldPolicy;
+            }
+            $policies[$field] = $fieldPolicies;
+        }
+        return $policies;
+    }
+
+    private function loadModelFieldPolicy($modelClass, $modelPolicy) {
+        $defaultFieldPolicy = isset($modelPolicy['access']) ? $modelPolicy['access'] : [];
+        $fieldAccessPolicy = [];
+        if (isset($modelPolicy['fields'])) {
+            $fieldAccessPolicy = $modelPolicy['fields'];
+        }
+        $policies = $this->detectModelFieldPolicies($modelClass, $fieldAccessPolicy, $defaultFieldPolicy);
+        foreach ($policies as $field => $fieldPolicies) {
+            $resourceId = call_user_func_array($this->config['fieldResourceGenerator'], [$modelClass, $field]);
+            $this->acl->addResource(new Resource($resourceId));
+            foreach ($fieldPolicies as $ruleSet => $privileges) {
+                foreach ($privileges as $privilege) {
+                    $this->enforceRuleset($ruleSet, ['privileges' => $privilege, 'resources' => $resourceId]);
+                }
+            }
+        }
+    }
 
     /**
      * Load model rules
      */
     private function loadModelRules()
     {
-        foreach ($this->rules['modelRules'] as $model => $modelRuleSets) {
-            $resourceId = $this->config['modelPrefix'] . $model;
+        foreach ($this->rules['modelRules'] as $modelClass => $modelPolicy) {
+            $resourceId = call_user_func_array($this->config['modelResourceGenerator'], [$modelClass]);
             $this->acl->addResource(new Resource($resourceId));
-            foreach ($modelRuleSets as $ruleSet) {
-                $this->enforceRuleset($ruleSet, ['resources' => $resourceId]);
+            $modelAccessPolicy = [];
+            if (isset($modelPolicy['access'])) {
+                $modelAccessPolicy = $modelPolicy['access'];
             }
+            foreach ($modelAccessPolicy as $ruleSet => $privileges) {
+                foreach ($privileges as $privilege) {
+                    $this->enforceRuleset($ruleSet, ['privileges' => $privilege, 'resources' => $resourceId]);
+                }
+            }
+            $this->loadModelFieldPolicy($modelClass, $modelPolicy);
         }
     }
 
+    private function translateModelPolicyToField(array $policy)
+    {
+        return $policy;
+    }
 
     /**
      * Load route rules
@@ -97,7 +165,7 @@ class AclGenerator
     private function loadRouteRules()
     {
         foreach ($this->rules['routeRules'] as $routeAlias => $routeRuleSets) {
-            $resourceId = $this->config['routePrefix']. $routeAlias;
+            $resourceId = call_user_func_array($this->config['routeResourceGenerator'], [$routeAlias]);
             $this->acl->addResource(new Resource($resourceId));
             foreach ($routeRuleSets as $ruleSet) {
                 $this->enforceRuleset($ruleSet, ['resources' => $resourceId, 'privileges' => $this->config['routePrivilege']]);
@@ -115,7 +183,7 @@ class AclGenerator
     private function enforceRuleset($ruleSet, array $base)
     {
         if (!isset($this->rules['ruleSets'][$ruleSet])) {
-            throw new InvalidAclRuleException("Invalid ACL configuration");
+            throw new InvalidAclRuleException("Invalid ACL configuration $ruleSet");
         }
         foreach ($this->rules['ruleSets'][$ruleSet] as $rule) {
             $this->enforceRule(array_merge($rule, $base));
@@ -147,7 +215,7 @@ class AclGenerator
      */
     private function getDefaultRules()
     {
-        return ['roles' => [], 'globalRules' => [], 'modelRules' => [], 'ruleSets' => [], 'routeRules' => []];
+        return ['roles' => [], 'globalRules' => [], 'globalFieldRules' => [], 'modelRules' => [], 'ruleSets' => [], 'routeRules' => []];
     }
 
     /**
@@ -157,7 +225,16 @@ class AclGenerator
      */
     private function getDefaultConfig()
     {
-        return ['modelPrefix' => 'm:', 'routePrefix' => 'r:', 'routePrivilege' => 'access'];
+        return [
+            'modelResourceGenerator' => function($model) {
+                return $model;
+            }, 
+            'fieldResourceGenerator' => function($model, $field) {
+                return $model.$field;
+            }, 
+            'routeResourceGenerator' => function($route) {
+                return $route;
+            }, 'routePrivilege' => 'access'];
     }
 
     /**
