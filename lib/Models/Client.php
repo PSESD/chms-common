@@ -42,6 +42,13 @@ abstract class Client extends BaseModel implements
         'secret'
     ];
 
+    /**
+     * Get the client endpoint model class
+     * 
+     * @return string
+     */
+    abstract public function getClientEndpointModel();
+
     public function rules()
     {
         return [

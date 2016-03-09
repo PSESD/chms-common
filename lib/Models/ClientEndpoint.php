@@ -9,7 +9,7 @@ namespace CHMS\Common\Models;
 
 use Canis\Laravel\Db\Models\Model as StandardModel;
 
-class ClientEndpoint extends StandardModel
+abstract class ClientEndpoint extends StandardModel
 {
 
     protected $table = 'oauth_client_endpoints';
@@ -24,6 +24,12 @@ class ClientEndpoint extends StandardModel
         'client_id'
     ];
 
+    /**
+     * Get the client class
+     * 
+     * @return string
+     */
+    abstract public function getClientClass();
 
     public function rules()
     {
