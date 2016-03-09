@@ -59,17 +59,13 @@ abstract class Client extends BaseModel implements
         ];
     }
 
-    // public function setSecretAttribute($secret)
-    // {
-    //     if(!empty($secret) && Hash::needsRehash($secret)) {
-    //         $secret = Hash::make($secret);
-    //     }
-    //     $this->attributes['secret'] = $secret;
-    // }
-
     public function checkPassword($password)
     {
         return $password === $this->secret;
-        return Hash::check($password, $this->secret);
+    }
+
+    public function endpoints()
+    {
+        return $this->hasMany($this->getClientEndpointModel());
     }
 }
