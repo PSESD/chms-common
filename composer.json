@@ -10,8 +10,7 @@
     ],
     "minimum-stability": "stable",
     "require": {
-        "zendframework/zend-permissions-acl": "^2.6",
-        "laravel/lumen-framework": "^5.2"
+        "zendframework/zend-permissions-acl": "^2.6"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
