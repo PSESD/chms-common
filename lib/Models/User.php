@@ -11,13 +11,12 @@ use Hash;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
-use Laravel\Lumen\Auth\Authorizable;
 
-class User extends BaseModel implements
+abstract class User extends BaseModel implements
     AuthenticatableContract,
     AuthorizableContract
 {
-    use Authenticatable, Authorizable;
+    use Authenticatable;
 
     /**
      * The attributes that are mass assignable.
@@ -42,7 +41,8 @@ class User extends BaseModel implements
     protected $hidden = [
         'password',
         'auth_key',
-        'token_hash'
+        'token_hash',
+        'remember_token'
     ];
 
     public function rules()
