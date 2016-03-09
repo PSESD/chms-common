@@ -19,6 +19,13 @@ abstract class User extends BaseModel implements
     use Authenticatable;
 
     /**
+     * Returns the role class
+     * 
+     * @return string
+     */
+    abstract public function getRoleClass();
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array
@@ -76,18 +83,8 @@ abstract class User extends BaseModel implements
         return Hash::check($password, $this->password);
     }
 
-    public function postalAddresses()
-    {
-        return $this->hasMany(PostalAddress::class, 'object_id');
-    }
-
-    public function phoneNumbers()
-    {
-        return $this->hasMany(PhoneNumber::class, 'object_id');
-    }
-
     public function roles()
     {
-        return $this->belongsToMany(Role::class, 'role_users');
+        return $this->belongsToMany($this->getRoleClass(), 'role_users');
     }
 }
