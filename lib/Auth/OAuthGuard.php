@@ -74,6 +74,37 @@ class OAuthGuard implements GaurdContract
     }
 
     /**
+     * Attempt to authenticate a user using the given credentials.
+     *
+     * @param  array  $credentials
+     * @param  boolean $login
+     * @return bool|Token
+     */
+    public function attempt(array $credentials = [], $login = true)
+    {
+        $user = $this->getProvider()->retrieveByCredentials($credentials);
+        if ($user instanceof Authenticatable && $this->hasValidCredentials($user, $credentials)) {
+            if ($login === true) {
+                $this->login($user);
+            }
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Determine if the user matches the credentials.
+     *
+     * @param  Authenticatable|null  $user
+     * @param  array  $credentials
+     * @return bool
+     */
+    protected function hasValidCredentials($user, $credentials)
+    {
+        return !is_null($user) && $this->getProvider()->validateCredentials($user, $credentials);
+    }
+    
+    /**
      * Validate a user's credentials.
      *
      * @param  array  $credentials
