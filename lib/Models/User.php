@@ -48,7 +48,6 @@ abstract class User extends BaseModel implements
     protected $hidden = [
         'password',
         'auth_key',
-        'token_hash',
         'remember_token'
     ];
 
@@ -61,11 +60,10 @@ abstract class User extends BaseModel implements
             [['email'], ['email', 'unique:users']],
             [['birth_date'], ['date', 'before:now']],
             [['ssn'], ['digits:4']],
-            [['title', 'first_name', 'last_name', 'token_hash', 'email', 'password', 'instructor_qualifications'], ['string']],
+            [['title', 'first_name', 'last_name', 'email', 'password', 'instructor_qualifications'], ['string']],
             [['first_name', 'last_name', ], ['max:100']],
             [['employee_id'], ['max:40']],
             [['email', 'title'], ['max:255']],
-            [['token_hash'], ['max:10']],
             [['active'], ['boolean']]
         ];
     }
