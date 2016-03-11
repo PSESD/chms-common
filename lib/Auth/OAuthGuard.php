@@ -56,10 +56,15 @@ class OAuthGuard implements GaurdContract
             return $this->user;
         }
         $user = null;
-        $resourceId = Authorizer::getResourceOwnerId();
-        $resourceType = Authorizer::getResourceOwnerType();
+        try {
+            $resourceId = Authorizer::getResourceOwnerId();
+            $resourceType = Authorizer::getResourceOwnerType();
+        } catch (\Exception $e) {
+            $resourceId = null;
+            $resourceType = null;
+        }
         if ($resourceType !== $this->id) {
-            return false;
+            return null;
         }
         if (!empty($resourceId)) {
             $user = $this->getProvider()->retrieveById($resourceId);
