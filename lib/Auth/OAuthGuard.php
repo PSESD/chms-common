@@ -103,6 +103,28 @@ class OAuthGuard implements GaurdContract
     {
         return !is_null($user) && $this->getProvider()->validateCredentials($user, $credentials);
     }
+
+
+    /**
+     * Log a user into the application.
+     *
+     * @param  \Illuminate\Contracts\Auth\Authenticatable  $user
+     */
+    public function login(Authenticatable $user)
+    {
+        $this->setUser($user);
+        return true;
+    }
+
+    /**
+     * Clear user
+     * @return boolean
+     */
+    public function logout()
+    {
+        $this->user = null;
+        return true;
+    }
     
     /**
      * Validate a user's credentials.
