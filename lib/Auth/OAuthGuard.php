@@ -13,8 +13,9 @@ use Illuminate\Http\Request;
 use Illuminate\Contracts\Auth\Guard as GaurdContract;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Auth\GuardHelpers;
+use Illuminate\Contracts\Auth\Factory as AuthFactory;
 
-class OAuthGuard implements GaurdContract
+class OAuthGuard implements GaurdContract, UniversalGuard
 {
     use GuardHelpers;
 
@@ -145,5 +146,25 @@ class OAuthGuard implements GaurdContract
     public function getProvider()
     {
         return $this->provider;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function universalUserLogin(AuthFactory $auth)
+    {
+        try {
+            $guard = Authorizer::getResourceOwnerType();
+        } catch (\Exception $e) {
+            $guard = null;
+        }
+        if ($guard === null) {
+            return false;
+        }
+        $user = $auth->guard($guard)->user();
+        if ($user === null) {
+            $guard = false;
+        }
+        return $guard;
     }
 }
