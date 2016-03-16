@@ -25,7 +25,7 @@
         },
         "files": [
           "lib/helpers.php"
-        ],
+        ]
     },
     "autoload-dev": {
         "psr-4": {
