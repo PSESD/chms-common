@@ -10,6 +10,7 @@ use CHMS\Common\Auth\RoleBucket;
 use CHMS\Common\Auth\Contexts\Guest as GuestContext;
 use CHMS\Common\Auth\Contexts\Client as ClientContext;
 use CHMS\Common\Auth\Contexts\RoleSet as RoleSetContext;
+use CHMS\Common\Models\User as UserModel;
 
 class AclTest extends TestCase
 {
@@ -90,25 +91,25 @@ class AclTest extends TestCase
     {
         $acl = $this->getAcl();
         $acl->switchRoleContext(['super_administrator']);
-        $this->assertTrue($acl->isAllowedModel(\CHMS\Hub\Models\User::class, 'read'));
+        $this->assertTrue($acl->isAllowedModel(UserModel::class, 'read'));
         $acl->switchRoleContext(['student']);
-        $this->assertFalse($acl->isAllowedModel(\CHMS\Hub\Models\User::class, 'set'));
+        $this->assertFalse($acl->isAllowedModel(UserModel::class, 'set'));
     }
 
     public function testAllowedField()
     {
         $acl = $this->getAcl();
         $acl->switchRoleContext(['hub_administrator']);
-        $this->assertTrue($acl->isAllowedField(\CHMS\Hub\Models\User::class, 'id', 'read'));
-        $this->assertFalse($acl->isAllowedField(\CHMS\Hub\Models\User::class, 'deleted_by', 'set'));
+        $this->assertTrue($acl->isAllowedField(UserModel::class, 'id', 'read'));
+        $this->assertFalse($acl->isAllowedField(UserModel::class, 'deleted_by', 'set'));
     }
 
     public function testAllowedFieldSet()
     {
         $acl = $this->getAcl();
         $acl->switchRoleContext(['hub_administrator']);
-        $this->assertTrue($acl->isAllowedField(\CHMS\Hub\Models\User::class, 'password', ['set', 'set_on_create']));
-        $this->assertFalse($acl->isAllowedField(\CHMS\Hub\Models\User::class, 'deleted_by', ['set', 'set_on_create']));
+        $this->assertTrue($acl->isAllowedField(UserModel::class, 'password', ['set', 'set_on_create']));
+        $this->assertFalse($acl->isAllowedField(UserModel::class, 'deleted_by', ['set', 'set_on_create']));
     }
 
     public function testWeirdRoles()

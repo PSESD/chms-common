@@ -1,7 +1,7 @@
 <?php
-namespace CHMSTests\Hub\Auth\Contexts;
+namespace CHMSTests\Common\Auth\Contexts;
 
-use CHMSTests\Hub\TestCase;
+use CHMSTests\Common\TestCase;
 
 abstract class BaseContextTest extends TestCase
 {

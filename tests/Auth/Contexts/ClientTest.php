@@ -1,5 +1,5 @@
 <?php
-namespace CHMSTests\Hub\Auth\Contexts;
+namespace CHMSTests\Common\Auth\Contexts;
 
 use CHMS\Hub\Auth\Contexts\Client as Context;
 

@@ -1,11 +1,11 @@
 <?php
 /**
- * Clock Hour Management System - Hub
+ * Clock Hour Management System
  *
  * @copyright Copyright (c) 2016 Puget Sound Educational Service District
- * @license   Proprietary
+ * @license   MIT
  */
-namespace CHMS\Hub\Auth\Contexts;
+namespace CHMS\Common\Auth\Contexts;
 
 use CHMS\Common\Contracts\Acl as AclContract;
 use CHMS\Common\Auth\Contexts\BaseContext;

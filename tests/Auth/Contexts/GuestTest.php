@@ -1,8 +1,8 @@
 <?php
-namespace CHMSTests\Hub\Auth\Contexts;
+namespace CHMSTests\Common\Auth\Contexts;
 
 use CHMS\Hub\Auth\Contexts\Guest as Context;
-use CHMSTests\Hub\TestCase;
+use CHMSTests\Common\TestCase;
 
 class GuestTest  extends BaseContextTest
 {

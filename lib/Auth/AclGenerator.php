@@ -7,7 +7,7 @@
  */
 namespace CHMS\Common\Auth;
 
-use Zend\Permissions\Acl\Acl;
+use Zend\Permissions\Acl\Acl as ZendAcl;
 use Zend\Permissions\Acl\Role\GenericRole as Role;
 use Zend\Permissions\Acl\Resource\GenericResource as Resource;
 
@@ -48,11 +48,11 @@ class AclGenerator
 
     /**
      * Generate ACL object
-     * @return Acl
+     * @return ZendAcl
      */
     public function __invoke()
     {
-        $this->acl = new Acl();
+        $this->acl = new ZendAcl();
         $this->loadRoles();
         $this->loadGlobalRules();
         $this->loadGlobalFieldRules();

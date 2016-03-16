@@ -1,4 +1,5 @@
 <?php
+
 return [
     'roles' => [
         'super_administrator' => ['name' => 'Super Administrator', 'level' => 0],

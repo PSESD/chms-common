@@ -1,0 +1,16 @@
+<?php
+/**
+ * Clock Hour Management System
+ *
+ * @copyright Copyright (c) 2016 Puget Sound Educational Service District
+ * @license   MIT
+ */
+namespace CHMSTests\Common\Http\Controllers\Base\ObjectActions;
+
+trait DeleteObjectTrait
+{
+    public function testStandardDelete()
+    {
+
+    }
+}

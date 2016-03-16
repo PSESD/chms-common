@@ -1,11 +1,11 @@
 <?php
 /**
- * Clock Hour Management System - Hub
+ * Clock Hour Management System
  *
  * @copyright Copyright (c) 2016 Puget Sound Educational Service District
  * @license   Proprietary
  */
-namespace CHMS\Hub\Providers;
+namespace CHMS\Common\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use League\Fractal\Serializer\JsonApiSerializer;

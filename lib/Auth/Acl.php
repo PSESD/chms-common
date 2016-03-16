@@ -1,18 +1,16 @@
 <?php
 /**
- * Clock Hour Management System - Hub
+ * Clock Hour Management System
  *
  * @copyright Copyright (c) 2016 Puget Sound Educational Service District
- * @license   Proprietary
+ * @license   MIT
  */
-namespace CHMS\Hub\Auth;
+namespace CHMS\Common\Auth;
 
 use Illuminate\Contracts\Auth\Guard as GuardContract;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Gate;
 use Zend\Permissions\Acl\Acl as AclRules;
-use CHMS\Common\Models\Role as RoleModel;
-
 use CHMS\Common\Auth\Contexts\Guest as GuestContext;
 use CHMS\Common\Auth\Contexts\RoleSet as RoleSetContext;
 use CHMS\Common\Contracts\Acl as AclContract;
@@ -22,7 +20,7 @@ use Cache;
 use Auth;
 use Laravel\Lumen\Application;
 
-class Acl implements AclContract
+abstract class Acl implements AclContract
 {
     const RESOURCE_ROUTE_PREFIX = 'r:';
     const ROUTE_PRIVILEGE = 'access';
@@ -71,19 +69,25 @@ class Acl implements AclContract
         $this->app = $app;
         $this->config = $config;
     }
+    /**
+     * Returns the Role model calss
+     * @return string
+     */
+    abstract protected function getRoleModel();
 
     /**
      * @inheritdoc
      */
     public function setupRoles()
     {
+        $roleModelClass = $this->getRoleModel();
         foreach ($this->config['roles'] as $roleId => $role) {
             if (!empty($role['virtual'])) {
                 continue;
             }
-            $roleModel = RoleModel::where('system_id', $roleId)->first();
+            $roleModel = $roleModelClass::where('system_id', $roleId)->first();
             if (empty($roleModel)) {
-                $roleModel = new RoleModel;
+                $roleModel = new $roleModelClass;
                 $roleModel->system_id = $roleId;
                 $roleModel->name = isset($role['name']) ? $role['name'] : $roleId;
                 $roleModel->context = isset($role['context']) ? $role['context'] : 'system';
@@ -249,7 +253,7 @@ class Acl implements AclContract
      */
     protected function getContextFromAuth(Model $modelObject = null)
     {
-        return new GuestContext($authSubject, $modelObject);
+        return new GuestContext(null, $modelObject);
     }
 
     /**

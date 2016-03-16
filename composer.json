@@ -10,7 +10,8 @@
     ],
     "minimum-stability": "stable",
     "require": {
-        "zendframework/zend-permissions-acl": "^2.6"
+        "zendframework/zend-permissions-acl": "^2.6",
+        "league/fractal": "^0.13.0"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
@@ -21,15 +22,11 @@
     },
     "autoload": {
         "psr-4": {
-            "CHMS\\Common\\": "lib/"
+            "CHMS\\Common\\": "lib/",
+            "CHMSTests\\Common\\": "tests/"
         },
         "files": [
           "lib/helpers.php"
         ]
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "CHMSTests\\Common\\": "tests/"
-        }
     }
 }
