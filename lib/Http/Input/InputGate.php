@@ -5,7 +5,7 @@
  * @copyright Copyright (c) 2016 Puget Sound Educational Service District
  * @license   MIT
  */
-namespace CHMS\Common\Http;
+namespace CHMS\Common\Http\Input;
 
 use Illuminate\Database\Eloquent\Model;
 use CHMS\Common\Contracts\InputGate as InputGateContract;
