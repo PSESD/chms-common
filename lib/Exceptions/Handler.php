@@ -30,6 +30,8 @@ use \Symfony\Component\HttpKernel\Exception\PreconditionFailedHttpException;
 use \Symfony\Component\HttpKernel\Exception\PreconditionRequiredHttpException;
 use \Symfony\Component\HttpKernel\Exception\UnsupportedMediaTypeHttpException;
 
+use \League\OAuth2\Server\Exception\OAuthException;
+
 class Handler extends ExceptionHandler
 {
     /**
@@ -84,6 +86,9 @@ class Handler extends ExceptionHandler
         $statusCode = 500;
         if (($message = $e->getMessage())) {
             $packageResponse['title'] = $message;
+        }
+        if ($e instanceof OAuthException) {
+            $e = new AccessDeniedHttpException($e->getMessage());
         }
         if ($e instanceof HttpException) {
             $statusCode = $e->getStatusCode();

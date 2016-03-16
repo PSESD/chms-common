@@ -22,7 +22,10 @@
     "autoload": {
         "psr-4": {
             "CHMS\\Common\\": "lib/"
-        }
+        },
+        "files": [
+          "lib/helpers.php"
+        ],
     },
     "autoload-dev": {
         "psr-4": {
