@@ -1,7 +1,7 @@
 <?php
 namespace CHMSTests\Common\Http\Controllers\Base;
 
-use CHMSTests\Hub\Stubs\GenericModel;
+use CHMSTests\Common\Stubs\GenericModel;
 
 trait ObjectTrait 
 {

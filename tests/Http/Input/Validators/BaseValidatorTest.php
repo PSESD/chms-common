@@ -1,7 +1,7 @@
 <?php
-namespace CHMSTests\Hub\Http\Input\Validators;
+namespace CHMSTests\Common\Http\Input\Validators;
 
-use CHMSTests\Hub\TestCase;
+use CHMSTests\Common\TestCase;
 use Laravel\Lumen\Testing\DatabaseMigrations;
 use CHMS\Hub\Models\User as UserModel;
 
