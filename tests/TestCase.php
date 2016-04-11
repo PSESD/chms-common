@@ -9,6 +9,7 @@ namespace CHMSTests\Common;
 
 class TestCase extends \Laravel\Lumen\Testing\TestCase
 {
+    protected $serverHeaders = [];
     /**
      * Creates the application.
      *
@@ -16,7 +17,9 @@ class TestCase extends \Laravel\Lumen\Testing\TestCase
      */
     public function createApplication()
     {
-        require_once __DIR__.'/../vendor/autoload.php';
+        if (!class_exists('Laravel\Lumen\Application')) {
+            require_once __DIR__.'/../vendor/autoload.php';
+        }
         $app = new \Laravel\Lumen\Application(
             realpath(__DIR__)
         );
