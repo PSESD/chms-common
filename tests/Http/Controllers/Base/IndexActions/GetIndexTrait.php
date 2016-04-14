@@ -19,6 +19,7 @@ trait GetIndexTrait
         $user = $this->getSuperAdmin();
         $fake = $this->createOne();
         $this->actingAs($user)->withoutMiddleware()->get($this->getRoute());
+        $this->assertEquals($this->response->getStatusCode(), 200);
         $this->seeJson(['id' => $fake->id]);
     }
 }
