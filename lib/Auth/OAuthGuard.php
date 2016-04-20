@@ -126,7 +126,7 @@ class OAuthGuard implements GaurdContract, UniversalGuard
         $this->user = null;
         return true;
     }
-    
+
     /**
      * Validate a user's credentials.
      *
