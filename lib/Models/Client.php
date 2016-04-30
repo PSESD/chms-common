@@ -29,7 +29,7 @@ abstract class Client extends BaseModel implements
      * @var array
      */
     protected $fillable = [
-        'provider_id',
+        'sponsor_id',
         'name',
         'type',
         'secret'

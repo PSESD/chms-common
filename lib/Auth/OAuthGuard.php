@@ -63,6 +63,7 @@ class OAuthGuard implements GaurdContract, UniversalGuard
         } catch (\Exception $e) {
             $resourceId = null;
             $resourceType = null;
+            // throw $e;
         }
         if ($resourceType !== $this->id) {
             return null;

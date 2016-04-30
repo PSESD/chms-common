@@ -106,7 +106,7 @@ abstract class Acl implements AclContract
      * @return boolean
      */
     public function canAccessRoute($routeAlias)
-    {   
+    {
         return $this->isAllowed($this->routeResourceGenerator($routeAlias), static::ROUTE_PRIVILEGE);
     }
 
@@ -323,7 +323,7 @@ abstract class Acl implements AclContract
     private function getGeneratorConfig()
     {
         return [
-            'modelResourceGenerator' => [$this, 'modelResourceGenerator'], 
+            'modelResourceGenerator' => [$this, 'modelResourceGenerator'],
             'fieldResourceGenerator' => [$this, 'fieldResourceGenerator'],
             'routeResourceGenerator' => [$this, 'routeResourceGenerator'],
             'routePrivilege' => static::ROUTE_PRIVILEGE
