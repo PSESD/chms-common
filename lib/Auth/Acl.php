@@ -156,6 +156,7 @@ abstract class Acl implements AclContract
         return $this->getContextualAcl()->isAllowed($this->getContextId(), $resource, $privilege);
     }
 
+
     /**
      * Set up ACL rules with the current context
      *
@@ -179,7 +180,7 @@ abstract class Acl implements AclContract
      * @param  Model  $modelObject
      * @return AclContextContract
      */
-    public function switchObjectContext(Model $modelObject)
+    public function switchObjectContext(Model $modelObject = null)
     {
         return $this->initiateContext($modelObject);
     }

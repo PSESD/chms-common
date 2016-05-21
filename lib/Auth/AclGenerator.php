@@ -69,6 +69,12 @@ class AclGenerator
         foreach ($this->rules['roles'] as $role => $roleConfig) {
             $parents = isset($roleConfig['parents']) ? $roleConfig['parents'] : null;
             $this->acl->addRole(new Role($role), $parents);
+            $this->enforceRule(['allow', 'privileges' => 'is-' . $role, 'roles' => $role]);
+        }
+        if (isset($this->rules['roleSets'])) {
+            foreach ($this->rules['roleSets'] as $generalRole => $roles) {
+                $this->enforceRule(['allow', 'privileges' => 'is-' . $generalRole, 'roles' => $roles]);
+            }
         }
     }
 

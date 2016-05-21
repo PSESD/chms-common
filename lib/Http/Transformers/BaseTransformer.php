@@ -34,6 +34,11 @@ abstract class BaseTransformer
         return $attributes;
     }
 
+    public function getMeta(Model $model)
+    {
+        return [];
+    }
+
     protected function getAllowedAclFields(Model $model, $privilege = 'read')
     {
         $acl = app(AclContract::class);

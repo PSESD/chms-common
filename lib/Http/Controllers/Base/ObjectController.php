@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 use CHMS\Common\Http\Controllers\Controller as BaseController;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use League\Fractal\Resource\Item as FractalItem;
 
 abstract class ObjectController
     extends BaseController
@@ -34,5 +35,19 @@ abstract class ObjectController
             throw new AccessDeniedHttpException("Forbidden");
         }
         return $model;
+    }
+
+    /**
+     * Get the fractal item object
+     * 
+     * @param   Model $model
+     * @return  FractalItem
+     */
+    protected function getFractalItem($model)
+    {
+        $transformer = $this->getTransformer();
+        $item = new FractalItem($model, $transformer, $this->getResourceKey());
+        $item->setMeta($transformer->getMeta($model));
+        return $item;
     }
 }

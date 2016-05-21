@@ -9,7 +9,6 @@ namespace CHMS\Common\Http\Controllers\Base\ObjectActions;
 
 use Illuminate\Http\Request;
 use League\Fractal\Manager as Fractal;
-use League\Fractal\Resource\Item as FractalItem;
 
 trait GetObjectTrait
 {
@@ -25,7 +24,7 @@ trait GetObjectTrait
         $model = $this->loadAuthorizeObject($id, 'read');
         $include = $request->input('include', '');
         return $this->respondWithItem(
-            $fractal->createData(new FractalItem($model, $this->getTransformer(), $this->getResourceKey()))
+            $fractal->createData($this->getFractalItem($model))
         );
     }
 }

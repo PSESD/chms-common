@@ -9,7 +9,6 @@ namespace CHMS\Common\Models;
 
 use Canis\Laravel\Db\Models\RegisteredModel;
 use Canis\Laravel\Db\Behaviors\BlameStampBehavior;
-use Auth;
 
 class BaseModel
 	extends RegisteredModel
@@ -22,8 +21,4 @@ class BaseModel
 	public $timestamps = false;
 
 
-    public function isAllowed($privilege)
-    {
-        return Auth::user()->can($privilege, $this);
-    }
 }

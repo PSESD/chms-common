@@ -24,7 +24,7 @@ trait HeadObjectTrait
     {
         $model = $this->loadAuthorizeObject($id, 'read');
         return $this->respondWithEmptyItem(
-            $fractal->createData(new FractalItem($model, $this->getTransformer(), $this->getResourceKey()))
+            $fractal->createData($this->getFractalItem($model))
         );
     }
 }

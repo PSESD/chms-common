@@ -11,6 +11,7 @@ use CHMS\Common\Contracts\Acl as AclContract;
 use CHMS\Common\Auth\Contexts\BaseContext;
 use CHMS\Common\Auth\RoleBucket;
 use Illuminate\Database\Eloquent\Model;
+use CHMS\Common\Contracts\Selfable as SelfableContract;
 
 abstract class BaseAuthSubject extends BaseContext
 {
@@ -70,16 +71,12 @@ abstract class BaseAuthSubject extends BaseContext
         if (!isset($this->subjectObject) || !isset($this->modelObject)) {
             return false;
         }
-        if (isset($this->modelObject->object_id) && $this->modelObject->object_id === $this->subjectObject->id) {
-            return true;
+        
+        if ($this->modelObject instanceof SelfableContract) {
+            return $this->modelObject->isSelfOwned($this->subjectObject);
         }
-        if (isset($this->modelObject->user_id) && $this->modelObject->user_id === $this->subjectObject->id) {
-            return true;
-        }
+
         // @todo test for organizational admins
-        if (get_class($this->subjectObject) !== get_class($this->modelObject)) {
-            return false;
-        }
-        return $this->subjectObject->id === $this->modelObject->id;
+        return false;
     }
 }

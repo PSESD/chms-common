@@ -13,9 +13,13 @@ class BaseObject extends BasePolicy
 {
     public function __call($method, $arguments)
     {
-        if (!app(AclContract::class)->isAllowedModel(get_class($arguments[1]), $method)) {
-            return false;
+        $acl = app(AclContract::class);
+        $acl->switchObjectContext($arguments[1]);
+        $result = false;
+        if ($acl->isAllowedModel(get_class($arguments[1]), $method)) {
+            $result = true;
         }
-        return true;
+        $acl->switchObjectContext(null);
+        return $result;
     }
 }

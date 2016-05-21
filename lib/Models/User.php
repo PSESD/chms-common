@@ -9,12 +9,14 @@ namespace CHMS\Common\Models;
 
 use Hash;
 use Illuminate\Auth\Authenticatable;
+use CHMS\Common\Contracts\Selfable as SelfableContract;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 
 abstract class User extends BaseModel implements
     AuthenticatableContract,
-    AuthorizableContract
+    AuthorizableContract,
+    SelfableContract
 {
     use Authenticatable;
 
@@ -84,5 +86,18 @@ abstract class User extends BaseModel implements
     public function roles()
     {
         return $this->belongsToMany($this->getRoleClass(), 'role_users');
+    }
+
+    public function hasRole($roleSystemId, $baseQuery = [])
+    {
+        $roleIds = Role::where('system_id', $roleSystemId)->pluck('id');
+        if (empty($roleIds)) { return false; }
+        $baseQuery['role_id'] = $roleIds;
+        return $this->roles()->where($baseQuery)->count() > 0;
+    }
+
+    public function isSelfOwned(AuthorizableContract $user)
+    {
+        return $user->id === $this->id;
     }
 }
