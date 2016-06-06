@@ -22,7 +22,7 @@ abstract class User extends BaseModel implements
 
     /**
      * Returns the role class
-     * 
+     *
      * @return string
      */
     abstract public function getRoleClass();
