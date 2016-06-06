@@ -32,7 +32,8 @@ abstract class Client extends BaseModel implements
         'sponsor_id',
         'name',
         'type',
-        'secret'
+        'secret',
+        'allow_password_auth'
     ];
 
     /**
