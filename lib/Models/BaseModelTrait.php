@@ -8,11 +8,13 @@
 namespace CHMS\Common\Models;
 
 use Canis\Laravel\Db\Behaviors\BlameStampBehavior;
+use Canis\Laravel\Db\Behaviors\MetaBehavior;
 use Auth;
 
 trait BaseModelTrait
 {
 	use BlameStampBehavior;
+    use MetaBehavior;
     
     public function isAllowed($privilege)
     {
