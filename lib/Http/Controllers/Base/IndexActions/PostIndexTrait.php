@@ -31,8 +31,14 @@ trait PostIndexTrait
             throw new UnprocessableEntityHttpException("Invalid request body");
         }
         $attributes = $originalAttributes = array_get($input, 'data.attributes', []);
-        $attributes = $inputGate->process($this->getRepository()->model(), $attributes, 'create');
-        if (!empty($attributes) && ($model = $this->getRepository()->create($attributes))) {
+        $relationships = array_get($input, 'data.relationships', []);
+        $model = $this->getRepository()->model();
+        $attributes = $inputGate->process($model, $attributes, 'create');
+        $validatedRelationshipData = $this->validateRelationshipData($model, $relationships, 'create');
+        if (!empty($attributes) 
+            && ($model = $this->getRepository()->create($attributes))
+            && $this->saveRelationshipData($validatedRelationshipData)
+        ) {
             return $this->respondWithCreated(
                 $fractal->createData(new FractalItem($this->getRepository()->findById($model->id), $this->getTransformer(), $this->getResourceKey()))
             );

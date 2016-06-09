@@ -11,12 +11,56 @@ use Laravel\Lumen\Routing\Controller as BaseController;
 use Illuminate\Http\Response;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Collection;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Illuminate\Database\Eloquent\Model;
 use League\Fractal\Scope as Fractal;
+use CHMS\Common\Http\Relationships\ValidatedRelationshipData;
 
 abstract class Controller extends BaseController
 {
     public function __construct()
     {
+    }
+
+    public function relationshipHandlers()
+    {
+        return [];
+    }
+
+    public function getRelationshipHandlers()
+    {
+        $handlers = [];
+        foreach ($this->relationshipHandlers() as $key => $handlerClass) {
+            $handlers[$key] = new $handlerClass;
+        }
+        return $handlers;
+    }
+
+    public function validateRelationshipData(Model $model, array $data, $scope)
+    {
+        $relationshipHandlers = $this->getRelationshipHandlers();
+        $validatedRelationshipData = new ValidatedRelationshipData;
+        foreach ($data as $relationshipType => $relationshipData) {
+            if (!isset($relationshipHandlers[$relationshipType])) {
+                throw new BadRequestHttpException("Relationship type '{$relationshipType}' is not valid");
+            }
+            $handler = $relationshipHandlers[$relationshipType];
+            $handler->validate($model, $relationshipData, $scope, true);
+            $validatedRelationshipData->addTasks($relationshipType, function() use ($handler, $model, $relationshipData, $scope) {
+                return $handler->handle($model, $relationshipData, $scope);
+            });
+        }
+        return $validatedRelationshipData;
+    }
+
+    public function saveRelationshipData(ValidatedRelationshipData $data)
+    {
+        foreach ($data->getHandleTasks() as $task) {
+            if (!$task()) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public function getDefaultHeaders()

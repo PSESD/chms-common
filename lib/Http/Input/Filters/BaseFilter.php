@@ -24,6 +24,19 @@ abstract class BaseFilter
     {
         $allowedAclFields = $this->getAllowedAclFields($model, $scenario);
         foreach ($input as $fieldName => $value) {
+            if ($fieldName === 'meta') {
+                if (is_array($value) && !in_array('meta.*', $allowedAclFields)) {
+                    foreach ($value as $key => $keyValue) {
+                        if (!in_array('meta.' . $key, $allowedAclFields)) {
+                            if ($throwException) {
+                                throw new InvalidInputException("Invalid meta field '{$key}'");
+                            }
+                            unset($input['meta'][$key]);
+                        }
+                    }
+                }
+                continue;
+            }
             if (!in_array($fieldName, $allowedAclFields)) {
                 if ($throwException) {
                     throw new InvalidInputException("Invalid field '{$fieldName}'");
@@ -48,9 +61,16 @@ abstract class BaseFilter
         $cacheKey = sha1(json_encode($privilege) . $acl->getContextId() . $modelClass);
         if (!isset($this->fieldAclCache[$cacheKey])) {
             $this->fieldAclCache[$cacheKey] = [];
+            $this->fieldAclCache[$cacheKey][] = 'meta';
             foreach ($model->getTableColumns() as $fieldName) {
                 if ($acl->isAllowedField($modelClass, $fieldName, $privilege)) {
                     $this->fieldAclCache[$cacheKey][] = $fieldName;
+                }
+            }
+            foreach ($model->metaFields() as $fieldName) {
+                $metaFieldName = 'meta.' . $fieldName;
+                if ($acl->isAllowedField($modelClass, $metaFieldName, $privilege)) {
+                    $this->fieldAclCache[$cacheKey][] = $metaFieldName;
                 }
             }
         }

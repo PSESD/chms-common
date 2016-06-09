@@ -8,6 +8,7 @@
 namespace CHMS\Common\Http\Controllers\Base\IndexActions;
 
 use Illuminate\Http\Request;
+use CHMS\Common\Repositories\Criteria\QueryFilter;
 use League\Fractal\Manager as Fractal;
 use League\Fractal\Resource\Collection as FractalCollection;
 use League\Fractal\Pagination\IlluminatePaginatorAdapter;
@@ -24,10 +25,18 @@ trait GetIndexTrait
     {
         $transformer = $this->getTransformer();
         $includes = $request->input('include', '');
+        $filter = $request->input('filter', false);
+        $items = $this->getRepository();
+        if ($filter && is_string($filter)) {
+            $filter = json_decode($filter, true);
+        }
+        $queryFilter = [];
+        if (!empty($filter)) {
+            $queryFilter = new QueryFilter($filter, $items->model(), $this->getTransformer()); 
+        }
         $fractal->parseIncludes($includes);
         $resource = $collection->setTransformer($transformer)->setResourceKey($this->getResourceKey());
-        $items = $this->getRepository();
-        $paginator = $items->paginate([], $transformer->getSafeEagerLoad($fractal->getRequestedIncludes()));
+        $paginator = $items->paginate($queryFilter, $transformer->getSafeEagerLoad($fractal->getRequestedIncludes()));
         $itemCollection = $paginator->getCollection();
         $resource->setData($itemCollection);
         $resource->setPaginator(new IlluminatePaginatorAdapter($paginator));
