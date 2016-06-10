@@ -90,7 +90,8 @@ abstract class User extends BaseModel implements
 
     public function hasRole($roleSystemId, $baseQuery = [])
     {
-        $roleIds = Role::where('system_id', $roleSystemId)->pluck('id');
+        $roleClass = $this->getRoleClass();
+        $roleIds = $roleClass::where('system_id', $roleSystemId)->pluck('id');
         if (empty($roleIds)) { return false; }
         $baseQuery['role_id'] = $roleIds;
         return $this->roles()->where($baseQuery)->count() > 0;
