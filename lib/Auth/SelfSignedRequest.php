@@ -35,7 +35,7 @@ class SelfSignedRequest
         if (!isset(self::$token)) {
             $grantor = Authorizer::getIssuer()->getGrantType('manual_client');
             $accessToken = $grantor->completeFlow();
-                \dump($accessToken);exit;
+            \dump($accessToken);exit;
             if (!empty($accessToken)) {
                 self::$token = $accessToken->getId();
             }
