@@ -7,6 +7,7 @@
  */
 namespace CHMS\Common\Auth;
 
+use League\OAuth2\Client\Provider\GenericProvider;
 use League\OAuth2\Server\Grant\AbstractGrant;
 use League\OAuth2\Server\Entity\AccessTokenEntity;
 use League\OAuth2\Server\Entity\ClientEntity;
@@ -14,6 +15,7 @@ use League\OAuth2\Server\Entity\SessionEntity;
 use League\OAuth2\Server\Event;
 use League\OAuth2\Server\Exception;
 use League\OAuth2\Server\Util\SecureKey;
+use League\OAuth2\Client\Token\AccessToken;
 
 /**
  * Client credentials grant class
@@ -87,7 +89,18 @@ class ManualClientGrant extends AbstractGrant
         $session->save();
         $accessToken->setSession($session);
         $accessToken->save();
-        \dump($accessToken);exit;
-        return ['id' => $accessToken->getId()];
+
+        $oauthClient = new GenericProvider([
+            'clientId'                => $selfClient->id,    // The client ID assigned to you by the provider
+            'clientSecret'            => $selfClient->secret,   // The client password assigned to you by the provider
+            'redirectUri'             => null,
+            'urlAuthorize'            => null,
+            'urlAccessToken'          => null,
+            'urlResourceOwnerDetails' => null
+        ]);
+        $accessToken = new AccessToken(['access_token' => $accessToken->getId(), 'expires' => $accessToken->getExpireTime()]);
+        return function ($method, $url, $options = []) use ($oauthClient, $accessToken) {
+            return $oauthClient->getAuthenticatedRequest($method, $url, $accessToken, $options);
+        };
     }
 }
