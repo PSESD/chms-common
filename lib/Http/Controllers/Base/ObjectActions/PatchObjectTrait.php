@@ -30,10 +30,11 @@ trait PatchObjectTrait
             throw new UnprocessableEntityHttpException("Invalid request body");
         }
         $attributes = $originalAttributes = array_get($input, 'data.attributes', []);
-        $attributes = $inputGate->process($this->getRepository()->model(), $attributes, 'update');
-
+        $relationships = array_get($input, 'data.relationships', []);
+        $attributes = $inputGate->process($model, $attributes, 'update');
+        $validatedRelationshipData = $this->validateRelationshipData($model, $relationships, 'update');
         // do update logic
-        if ($model->update($attributes)) {
+        if ($model->update($attributes) && $this->saveRelationshipData($validatedRelationshipData)) {
             return $this->respondWithUpdated(
                 $fractal->createData(new FractalItem($this->loadAuthorizeObject($id, 'update'), $this->getTransformer(), $this->getResourceKey()))
             );

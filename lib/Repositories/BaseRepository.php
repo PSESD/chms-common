@@ -8,7 +8,7 @@
 namespace CHMS\Common\Repositories;
 
 use Illuminate\Database\Eloquent\Model;
-use CHMS\Common\Repositories\Criteria\BaseCriteria as Criteria;
+use CHMS\Common\Contracts\Criteria as CriteriaContract;
 
 abstract class BaseRepository
     implements BaseRepositoryContract
@@ -41,7 +41,11 @@ abstract class BaseRepository
     public function query($criteria = [], $with = [])
     {
         $query = $this->model->newQuery();
-        $query->where($criteria);
+        if ($criteria instanceof CriteriaContract) {
+            $criteria->apply($query, $this);
+        } elseif(!empty($criteria)) {
+            $query->where($criteria);
+        }
         return $query;
     }
 
@@ -50,7 +54,8 @@ abstract class BaseRepository
      */
     public function paginate($criteria = [], $with = [])
     {
-        return $this->query($criteria, $with)->paginate(20);
+        $table = $this->model->getTable();
+        return $this->query($criteria, $with)->paginate(20, [$table .'.*']);
     }
 
     /**
@@ -58,7 +63,8 @@ abstract class BaseRepository
      */
     public function find($criteria = [], $with = [])
     {
-        return $this->query($criteria, $with)->first();
+        $table = $this->model->getTable();
+        return $this->query($criteria, $with)->first([$table.'.*']);
     }
 
     /**
@@ -66,7 +72,8 @@ abstract class BaseRepository
      */
     public function findAll($criteria = [], $with = [])
     {
-        return $this->query($criteria, $with)->get();
+        $table = $this->model->getTable();
+        return $this->query($criteria, $with)->get([$table.'.*']);
     }
 
     /**

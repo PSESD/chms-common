@@ -16,6 +16,7 @@ use CHMS\Common\Auth\Contexts\RoleSet as RoleSetContext;
 use CHMS\Common\Contracts\Acl as AclContract;
 use CHMS\Common\Contracts\AclContext as AclContextContract;
 use Zend\Permissions\Acl\Role\GenericRole as Role;
+use Zend\Permissions\Acl\Exception\InvalidArgumentException;
 use Cache;
 use Auth;
 use Laravel\Lumen\Application;
@@ -153,7 +154,12 @@ abstract class Acl implements AclContract
             }
             return false;
         }
-        return $this->getContextualAcl()->isAllowed($this->getContextId(), $resource, $privilege);
+        try {
+            $result = $this->getContextualAcl()->isAllowed($this->getContextId(), $resource, $privilege);
+        } catch (InvalidArgumentException $e) {
+            return false;
+        }
+        return $result;
     }
 
 

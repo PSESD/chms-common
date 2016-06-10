@@ -105,6 +105,9 @@ class AclGenerator
         }
         $definedPolicies = array_merge($this->globalFieldRules, $fieldAccessPolicy);
         $fields = $model->getTableColumns();
+        foreach ($model->metaFields() as $metaField) {
+            $fields[] = 'meta.' . $metaField;
+        }
         $policies = [];
         foreach ($fields as $field) {
             $fieldPolicies = [];
