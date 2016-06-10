@@ -18,7 +18,9 @@ abstract class Client extends BaseModel implements
 {
     use Authenticatable;
 
-    const TYPE_HUB = 'hub';
+    const TYPE_CENTRAL_HUB = 'central_hub';
+    const TYPE_CLIENT = 'client';
+    const TYPE_PROVIDER_HUB = 'provider_hub';
     const TYPE_PROVIDER = 'provider';
 
     protected $table = 'oauth_clients';

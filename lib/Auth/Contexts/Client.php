@@ -24,10 +24,14 @@ class Client extends BaseAuthSubject
     {
         if (!isset($this->roles)) {
             $this->roles = parent::getRoles();
-            if ($this->subjectObject->type === ClientModel::TYPE_HUB) {
-                $this->roles->add('client_hub');
+            if ($this->subjectObject->type === ClientModel::TYPE_CENTRAL_HUB) {
+                $this->roles->add('client_central_hub');
             } elseif ($this->subjectObject->type === ClientModel::TYPE_PROVIDER) {
                 $this->roles->add('client_provider');
+            } elseif ($this->subjectObject->type === ClientModel::TYPE_PROVIDER_HUB) {
+                $this->roles->add('client_provider_hub');
+            } elseif ($this->subjectObject->type === ClientModel::TYPE_CLIENT) {
+                $this->roles->add('client_client');
             }
         }
         return clone $this->roles;

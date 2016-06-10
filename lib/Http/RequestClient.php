@@ -11,6 +11,7 @@ use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Client as GuzzleClient;
 use Art4\JsonApiClient\Utils\Manager as JsonManager;
+use Art4\JsonApiClient\Exception\ValidationException;
 
 class RequestClient
 {
@@ -34,8 +35,16 @@ class RequestClient
         if ($response->getStatusCode() !== 200) {
             return false;
         }
+        $jsonResponse = $response->getBody()->getContents();
+        \dump($jsonResponse);exit;
+        
         $jsonapi = new JsonManager;
-        return $jsonapi->parse($response->getBody()->getContents());
+        try {
+            $parsed = $jsonapi->parse($jsonResponse);
+        } catch (ValidationException $e) {
+            return false;
+        }
+        return $parsed;
     }
 
     public function makeParse(Request $request)
