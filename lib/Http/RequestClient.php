@@ -36,8 +36,6 @@ class RequestClient
             return false;
         }
         $jsonResponse = $response->getBody()->getContents();
-        \dump($jsonResponse);exit;
-        
         $jsonapi = new JsonManager;
         try {
             $parsed = $jsonapi->parse($jsonResponse);
