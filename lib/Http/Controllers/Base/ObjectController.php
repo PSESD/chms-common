@@ -27,7 +27,7 @@ abstract class ObjectController
      */
     protected function loadAuthorizeObject($id, $action)
     {
-        $model = $this->getRepository()->findById($id);
+        $model = $this->getRepository()->findById($id, [], app('context'));
         if (empty($model)) {
             throw new NotFoundHttpException("Object not found");
         }

@@ -36,7 +36,7 @@ trait PostIndexTrait
         $attributes = $inputGate->process($model, $attributes, 'create');
         $validatedRelationshipData = $this->validateRelationshipData($model, $relationships, 'create');
         if (!empty($attributes) 
-            && ($model = $this->getRepository()->create($attributes))
+            && ($model = $this->getRepository()->create($attributes, app('context')))
             && $this->saveRelationshipData($validatedRelationshipData)
         ) {
             return $this->respondWithCreated(

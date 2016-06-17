@@ -34,6 +34,7 @@ abstract class User extends BaseModel implements
      */
     protected $fillable = [
         'first_name',
+        'middle_name',
         'last_name',
         'email',
         'title',
@@ -62,7 +63,7 @@ abstract class User extends BaseModel implements
             [['email'], ['email', 'unique:users']],
             [['birth_date'], ['date', 'before:now']],
             [['ssn'], ['digits:4']],
-            [['title', 'first_name', 'last_name', 'email', 'password', 'instructor_qualifications'], ['string']],
+            [['title', 'first_name', 'middle_name', 'last_name', 'email', 'password', 'instructor_qualifications'], ['string']],
             [['first_name', 'last_name', ], ['max:100']],
             [['employee_id'], ['max:40']],
             [['email', 'title'], ['max:255']],

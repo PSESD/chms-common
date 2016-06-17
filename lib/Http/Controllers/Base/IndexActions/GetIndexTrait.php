@@ -36,7 +36,7 @@ trait GetIndexTrait
         }
         $fractal->parseIncludes($includes);
         $resource = $collection->setTransformer($transformer)->setResourceKey($this->getResourceKey());
-        $paginator = $items->paginate($queryFilter, $transformer->getSafeEagerLoad($fractal->getRequestedIncludes()));
+        $paginator = $items->paginate($queryFilter, $transformer->getSafeEagerLoad($fractal->getRequestedIncludes()), app('context'));
         $itemCollection = $paginator->getCollection();
         $resource->setData($itemCollection);
         $resource->setPaginator(new IlluminatePaginatorAdapter($paginator));

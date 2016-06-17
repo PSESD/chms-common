@@ -30,6 +30,10 @@ trait PatchObjectTrait
             throw new UnprocessableEntityHttpException("Invalid request body");
         }
         $attributes = $originalAttributes = array_get($input, 'data.attributes', []);
+        $context = app('context');
+        foreach ($context as $key => $value) {
+            unset($attributes[$key]);
+        }
         $relationships = array_get($input, 'data.relationships', []);
         $attributes = $inputGate->process($model, $attributes, 'update');
         $validatedRelationshipData = $this->validateRelationshipData($model, $relationships, 'update');
