@@ -119,4 +119,17 @@ abstract class Controller extends BaseController
     {
         return response()->make($message, $statusCode, array_merge($this->getDefaultHeaders(), $headers));
     }
+
+    public function beforeRequest(Request $request)
+    {
+        if (!$this->prepareContext($request)) {
+            return false;
+        }
+        return true;
+    }
+
+    protected function prepareContext(Request $request)
+    {
+        return true;
+    }
 }

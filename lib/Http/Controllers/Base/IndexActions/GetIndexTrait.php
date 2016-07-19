@@ -23,6 +23,7 @@ trait GetIndexTrait
      */
     public function get(Request $request, Fractal $fractal, FractalCollection $collection)
     {
+        $this->beforeRequest($request, func_get_args());
         $transformer = $this->getTransformer();
         $includes = $request->input('include', '');
         $filter = $request->input('filter', false);

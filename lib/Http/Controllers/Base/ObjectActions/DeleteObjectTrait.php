@@ -20,8 +20,10 @@ trait DeleteObjectTrait
      * @param  string $id Unique identifier for the object
      * @return ResponseInterface    Response for object
      */
-    public function delete(Request $request, Fractal $fractal, $id)
+    public function delete(Request $request, Fractal $fractal)
     {
+        $this->beforeRequest($request, func_get_args());
+        $id = $this->parseObjectId($request);
         $model = $this->loadAuthorizeObject($id, 'delete');
         if (!$model->delete()) {
             return $this->respondWithError('Unable to delete the object', 500);

@@ -18,6 +18,19 @@ trait BaseModelTrait
     
     public function isAllowed($privilege)
     {
+        if ($privilege === 'update') {
+            $privilege = 'set';
+        }
         return Auth::user()->can($privilege, $this);
+    }
+
+    public function getFields()
+    {
+        return array_merge($this->getVirtualFields(), $this->getTableColumns());
+    }
+    
+    public function getVirtualFields()
+    {
+        return [];
     }
 }

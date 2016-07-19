@@ -48,6 +48,12 @@ abstract class BaseRepository
             $query->where($criteria);
         }
         if ($context !== null && ($contextFields = $context->getContextFields()) && !empty($contextFields)) {
+            $fields = $this->fields();
+            foreach ($contextFields as $field => $value) {
+                if (!in_array($field, $fields)) {
+                    unset($contextFields[$field]);
+                }
+            }
             $query->where($contextFields);
         }
         return $query;
@@ -99,5 +105,13 @@ abstract class BaseRepository
     public function model()
     {
         return $this->model;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function fields()
+    {
+        return \DB::getSchemaBuilder()->getColumnListing($this->model->getTable());
     }
 }

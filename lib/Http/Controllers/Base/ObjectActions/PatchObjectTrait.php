@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use League\Fractal\Manager as Fractal;
 use League\Fractal\Resource\Item as FractalItem;
 use CHMS\Common\Exceptions\UnprocessableEntityHttpException;
+use CHMS\Common\Exceptions\ServerErrorHttpException;
 use CHMS\Common\Contracts\InputGate as InputGateContract;
 
 trait PatchObjectTrait
@@ -22,8 +23,10 @@ trait PatchObjectTrait
      * @param  string $id Unique identifier for the object
      * @return ResponseInterface    Response for object
      */
-    public function patch(Request $request, Fractal $fractal, InputGateContract $inputGate, $id)
+    public function patch(Request $request, Fractal $fractal, InputGateContract $inputGate)
     {
+        $this->beforeRequest($request, func_get_args());
+        $id = $this->parseObjectId($request);
         $model = $this->loadAuthorizeObject($id, 'update');
         $input = $request->json()->all();
         if (!is_array($input) || empty($input)) {
@@ -44,7 +47,7 @@ trait PatchObjectTrait
             );
         }
         
-        throw ServerErrorHttpException("Unable to save object. Try again later.");
+        throw new ServerErrorHttpException("Unable to save object. Try again later.");
     }
 
 }

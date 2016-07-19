@@ -104,7 +104,7 @@ class AclGenerator
             unset($fieldAccessPolicy['*']);
         }
         $definedPolicies = array_merge($this->globalFieldRules, $fieldAccessPolicy);
-        $fields = $model->getTableColumns();
+        $fields = $model->getFields();
         foreach ($model->metaFields() as $metaField) {
             $fields[] = 'meta.' . $metaField;
         }

@@ -12,6 +12,7 @@ use CHMS\Common\Http\Controllers\Controller as BaseController;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use League\Fractal\Resource\Item as FractalItem;
+use Illuminate\Http\Request;
 
 abstract class ObjectController
     extends BaseController
@@ -29,7 +30,7 @@ abstract class ObjectController
     {
         $model = $this->getRepository()->findById($id, [], app('context'));
         if (empty($model)) {
-            throw new NotFoundHttpException("Object not found");
+            throw new NotFoundHttpException("Object ($id) not found");
         }
         if (!$model->isAllowed($action)) {
             throw new AccessDeniedHttpException("Forbidden");
@@ -49,5 +50,23 @@ abstract class ObjectController
         $item = new FractalItem($model, $transformer, $this->getResourceKey());
         $item->setMeta($transformer->getMeta($model));
         return $item;
+    }
+
+    protected function getObjectIdParameter()
+    {
+        return 'id';
+    }
+
+    
+
+    protected function parseObjectId(Request $request)
+    {
+        $route = $request->route();
+        $context = app('context');
+        $param = $this->getObjectIdParameter();
+        if (isset($route[2][$param])) {
+            return $route[2][$param];
+        }
+        return null;
     }
 }

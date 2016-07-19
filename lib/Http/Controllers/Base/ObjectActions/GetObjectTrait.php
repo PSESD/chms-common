@@ -19,8 +19,10 @@ trait GetObjectTrait
      * @param  string $id Unique identifier for the object
      * @return ResponseInterface    Response for object
      */
-    public function get(Request $request, Fractal $fractal, $id)
+    public function get(Request $request, Fractal $fractal)
     {
+        $this->beforeRequest($request, func_get_args());
+        $id = $this->parseObjectId($request);
         $model = $this->loadAuthorizeObject($id, 'read');
         $include = $request->input('include', '');
         return $this->respondWithItem(

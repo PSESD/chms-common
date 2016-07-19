@@ -20,8 +20,10 @@ trait HeadObjectTrait
      * @param  string $id Unique identifier for the object
      * @return ResponseInterface    Response for object
      */
-    public function head(Request $request, Fractal $fractal, $id)
+    public function head(Request $request, Fractal $fractal)
     {
+        $this->beforeRequest($request, func_get_args());
+        $id = $this->parseObjectId($request);
         $model = $this->loadAuthorizeObject($id, 'read');
         return $this->respondWithEmptyItem(
             $fractal->createData($this->getFractalItem($model))

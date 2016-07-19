@@ -26,6 +26,7 @@ trait PostIndexTrait
      */
     public function post(Request $request, Fractal $fractal, InputGateContract $inputGate)
     {
+        $this->beforeRequest($request, func_get_args());
         $input = $request->json()->all();
         if (!is_array($input) || empty($input)) {
             throw new UnprocessableEntityHttpException("Invalid request body");

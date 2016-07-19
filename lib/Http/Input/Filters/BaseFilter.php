@@ -62,7 +62,7 @@ abstract class BaseFilter
         if (!isset($this->fieldAclCache[$cacheKey])) {
             $this->fieldAclCache[$cacheKey] = [];
             $this->fieldAclCache[$cacheKey][] = 'meta';
-            foreach ($model->getTableColumns() as $fieldName) {
+            foreach ($model->getFields() as $fieldName) {
                 if ($acl->isAllowedField($modelClass, $fieldName, $privilege)) {
                     $this->fieldAclCache[$cacheKey][] = $fieldName;
                 }
